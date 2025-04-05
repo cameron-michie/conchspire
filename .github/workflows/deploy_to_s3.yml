@@ -20,10 +20,18 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{secrets.AWS_REGION}}
 
+      - name: Verify AWS credentials
+        run: |
+          aws sts get-caller-identity
+
       - name: Deploy to S3
         run: |
-          aws s3 sync conchspire ${{secrets.BUCKET_URL}} --delete
+          echo "Deploying to S3 bucket: ${{secrets.BUCKET_NAME}}"
+          aws s3 sync ./conchspire s3://${{secrets.BUCKET_NAME}} --delete
+          echo "Deployment completed successfully"
 
       - name: Invalidate CloudFront cache
         run: |
-          aws cloudfront create-invalidation --distribution-id ${{secrets.CLOULDFRONT_DESTRIBUTION_ID}} --paths "/*"
+          echo "Invalidating CloudFront cache for distribution: ${{secrets.CLOUDFRONT_DISTRIBUTION_ID}}"
+          aws cloudfront create-invalidation --distribution-id ${{secrets.CLOUDFRONT_DISTRIBUTION_ID}} --paths "/*"
+          echo "Cache invalidation completed successfully"
