@@ -24,6 +24,23 @@ jobs:
         run: |
           aws sts get-caller-identity
 
+      - name: Create S3 bucket if it doesn't exist
+        run: |
+          echo "Checking if S3 bucket exists: ${{secrets.BUCKET_NAME}}"
+          if ! aws s3api head-bucket --bucket ${{secrets.BUCKET_NAME}} 2>&1; then
+            echo "Bucket does not exist. Creating bucket: ${{secrets.BUCKET_NAME}}"
+            aws s3api create-bucket --bucket ${{secrets.BUCKET_NAME}} --region ${{secrets.AWS_REGION}}
+            echo "Configuring bucket for static website hosting"
+            aws s3api put-bucket-website --bucket ${{secrets.BUCKET_NAME}} --website-configuration '{"IndexDocument":{"Suffix":"index.html"}}'
+            echo "Enabling versioning"
+            aws s3api put-bucket-versioning --bucket ${{secrets.BUCKET_NAME}} --versioning-configuration '{"Status":"Enabled"}'
+            echo "Configuring server-side encryption"
+            aws s3api put-bucket-encryption --bucket ${{secrets.BUCKET_NAME}} --server-side-encryption-configuration '{"Rules":[{"ApplyServerSideEncryptionByDefault":{"SSEAlgorithm":"AES256"}}]}'
+            echo "Bucket created and configured successfully"
+          else
+            echo "Bucket already exists: ${{secrets.BUCKET_NAME}}"
+          fi
+
       - name: Deploy to S3
         run: |
           echo "Deploying to S3 bucket: ${{secrets.BUCKET_NAME}}"
