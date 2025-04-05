@@ -3,18 +3,18 @@ variable "AWS_REGION" {
 }
 
 variable "BUCKET_NAME" {
-  default = "www-formative-minds-com"
+  default = "conchspire"
 }
 
 variable "DOMAIN_NAME" {
-  default = "formativeminds.com"
+  default = "conchspire.com"
 }
 
 
 variable "WILDCARD_DOMAIN_NAME" {
-  default = "*.formativeminds.com"
+  default = "*.conchspire.com"
 }
 
 variable "WWW_DOMAIN_NAME" {
-  default = "www.formativeminds.com"
+  default = "www.conchspire.com"
 }
