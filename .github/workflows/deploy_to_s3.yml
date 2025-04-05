@@ -22,7 +22,7 @@ jobs:
 
       - name: Deploy to S3
         run: |
-          aws s3 sync demo_static_site ${{secrets.BUCKET_URL}} --delete
+          aws s3 sync conchspire ${{secrets.BUCKET_URL}} --delete
 
       - name: Invalidate CloudFront cache
         run: |
